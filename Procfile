@@ -1,2 +1,2 @@
 release: python manage.py migrate
-web: gunicorn --pythonpath datagen config.wsgi
+web: gunicorn --pythonpath urlstorage config.wsgi
