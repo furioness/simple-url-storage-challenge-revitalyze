@@ -2,6 +2,8 @@ from django.views.generic import ListView, CreateView
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
+from django.db.utils import IntegrityError
+from django.http import HttpResponseRedirect
 
 from .models import URL
 
@@ -20,10 +22,21 @@ class AddURLView(LoginRequiredMixin, CreateView):
     template_name = "storage/url_add.html"
     model = URL
     fields = ('url', )
-    success_url = reverse_lazy("storage:url_add")
+    success_message = "URL {} added successfully."
+    duplicate_message = "URL {} is already stored."
     
 
     def form_valid(self, form):
         form.instance.user = self.request.user
-        return super().form_valid(form)
+        url = form.cleaned_data['url']
+
+        try:
+            self.object = form.save()
+        except IntegrityError:
+            messages.info(self.request, self.duplicate_message.format(url))
+        else: 
+            messages.success(self.request, self.success_message.format(url))
+
+        return HttpResponseRedirect(reverse_lazy("storage:add"))
+        
     
