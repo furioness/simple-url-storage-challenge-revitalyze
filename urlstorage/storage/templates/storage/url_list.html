@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% load django_bootstrap5 %}
+
+{% block title %}List URLs{% endblock %}
+
+{% block content %}
+    <h2><a href="{% url 'storage:add' %}">Add a new URL</a></h2>
+   
+    {% if urls %}
+        <ul>
+            {% for url in urls %}
+                <li>{{url.url}}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        There is no any URL. 
+        Consider adding some <a href="{% url 'storage:add' %}">here</a> 
+    {% endif %}
+{% endblock %}
